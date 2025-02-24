@@ -13,17 +13,18 @@ exports.addTask = async (req, res, next) => {
 
 exports.getTasks = async (req, res, next) => {
     try {
-        let { page = 1, limit = 10, priority } = req.query;
+        let { page = 1, limit = 10, priority, sortBy = "createdAt", order = "desc" } = req.query;
 
         page = parseInt(page, 10);
         limit = parseInt(limit, 10);
 
         if (isNaN(page) || page < 1) page = 1;
         if (isNaN(limit) || limit < 1) limit = 10;
+        if (!["asc", "desc"].includes(order.toLowerCase())) order = "desc"; 
 
         const offset = (page - 1) * limit;
 
-        const { tasks, totalCount } = await taskService.getTasks(priority, limit, offset);
+        const { tasks, totalCount } = await taskService.getTasks(priority, limit, offset, sortBy, order);
 
         res.status(200).json({
             currentPage: page,
@@ -35,6 +36,7 @@ exports.getTasks = async (req, res, next) => {
         next(error);
     }
 };
+
 
 
 exports.getTaskById = async (req, res, next) => {

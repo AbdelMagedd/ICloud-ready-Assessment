@@ -7,18 +7,27 @@ class TaskRepository {
         return await task.save();
     }
 
-    async getAllTasks(priority, limit, offset) {
+    async getAllTasks(priority, limit, offset, sortBy, order) {
         const filter = {};
 
         if (priority && ['low', 'medium', 'high'].includes(priority)) {
             filter.priority = priority;
         }
 
-        const tasks = await taskModel.find(filter).skip(offset).limit(limit);
+
+        const sortOrder = order.toLowerCase() === "asc" ? 1 : -1;
+        const sortOptions = { [sortBy]: sortOrder };
+
+        const tasks = await taskModel.find(filter)
+            .sort(sortOptions)
+            .skip(offset)
+            .limit(limit);
+
         const totalCount = await taskModel.countDocuments(filter);
 
         return { tasks, totalCount };
     }
+
 
 
     async getTaskById(id) {
