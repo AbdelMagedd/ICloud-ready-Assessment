@@ -9,7 +9,9 @@ class TaskService {
         return await taskRepository.getAllTasks(priority, limit, offset, sortBy, order);
     }
 
-
+    async getTasksAssignedToUser(priority, limit, offset, sortBy, order, userId) {
+        return await taskRepository.getTasksAssignedToUser(priority, limit, offset, sortBy, order, userId);
+    }
     async getTaskById(id) {
         return await taskRepository.getTaskById(id);
     }

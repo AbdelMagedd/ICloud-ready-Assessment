@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const taskRoutes = require('./routes/task.routes');
 const authRoutes = require('./routes/auth.routes');
+const userRoutes = require('./routes/user.routes');
 const authMiddleware = require('./middlewares/authMiddleware');
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/tasks', authMiddleware, taskRoutes);
 
 // Connect to MongoDB

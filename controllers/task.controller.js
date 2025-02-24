@@ -20,11 +20,41 @@ exports.getTasks = async (req, res, next) => {
 
         if (isNaN(page) || page < 1) page = 1;
         if (isNaN(limit) || limit < 1) limit = 10;
-        if (!["asc", "desc"].includes(order.toLowerCase())) order = "desc"; 
+        if (!["asc", "desc"].includes(order.toLowerCase())) order = "desc";
 
         const offset = (page - 1) * limit;
 
         const { tasks, totalCount } = await taskService.getTasks(priority, limit, offset, sortBy, order);
+
+        res.status(200).json({
+            currentPage: page,
+            totalPages: Math.ceil(totalCount / limit),
+            totalTasks: totalCount,
+            tasks
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getTasksAssingedToUser = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        let { page = 1, limit = 10, priority, sortBy = "createdAt", order = "desc" } = req.query;
+
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+        page = parseInt(page, 10);
+        limit = parseInt(limit, 10);
+
+        if (isNaN(page) || page < 1) page = 1;
+        if (isNaN(limit) || limit < 1) limit = 10;
+        if (!["asc", "desc"].includes(order.toLowerCase())) order = "desc";
+
+        const offset = (page - 1) * limit;
+
+        const { tasks, totalCount } = await taskService.getTasksAssignedToUser(priority, limit, offset, sortBy, order, userId);
 
         res.status(200).json({
             currentPage: page,
