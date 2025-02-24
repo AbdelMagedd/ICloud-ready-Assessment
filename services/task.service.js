@@ -5,8 +5,8 @@ class TaskService {
         return await taskRepository.createTask(taskData);
     }
 
-    async getTasks() {
-        return await taskRepository.getAllTasks();
+    async getTasks(priority, limit, offset) {
+        return await taskRepository.getAllTasks(priority, limit, offset);
     }
 
     async getTaskById(id) {

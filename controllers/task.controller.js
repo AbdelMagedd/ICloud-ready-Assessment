@@ -13,12 +13,29 @@ exports.addTask = async (req, res, next) => {
 
 exports.getTasks = async (req, res, next) => {
     try {
-        const tasks = await taskService.getTasks();
-        res.status(200).json(tasks);
+        let { page = 1, limit = 10, priority } = req.query;
+
+        page = parseInt(page, 10);
+        limit = parseInt(limit, 10);
+
+        if (isNaN(page) || page < 1) page = 1;
+        if (isNaN(limit) || limit < 1) limit = 10;
+
+        const offset = (page - 1) * limit;
+
+        const { tasks, totalCount } = await taskService.getTasks(priority, limit, offset);
+
+        res.status(200).json({
+            currentPage: page,
+            totalPages: Math.ceil(totalCount / limit),
+            totalTasks: totalCount,
+            tasks
+        });
     } catch (error) {
         next(error);
     }
 };
+
 
 exports.getTaskById = async (req, res, next) => {
     try {
